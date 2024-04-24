@@ -40,18 +40,23 @@ def calculo_hsv(h_prom, s_prom, v_prom, imagen, hsv):
     white = np.full(h.shape + (3,), 255, np.uint8)
     black = np.full(h.shape + (3,), 0, np.uint8)
 
+    h_condition = np.abs(h_prom - h) < 5
+    t_condition = np.sqrt((s_prom - s) ** 2 + (v_prom - v) ** 2) < 50
+
     dilatacion = limpieza(
         # Matriz condicional
-        np.where(np.sqrt((h_prom - h) ** 2 + (s_prom - s) ** 2 + (v_prom - v) ** 2)[..., None] <= 50, black, white),
+        np.where(np.logical_and(h_condition, t_condition)[..., None], black, white),
         (5, 5),
         (31, 31),
         (21, 21)
     )
 
-    cv2.imshow("tryme", np.where(cv2.cvtColor(dilatacion, cv2.COLOR_GRAY2BGR) == white, imagen, black))
+    cv2.imshow("Segemtación", np.where(cv2.cvtColor(dilatacion, cv2.COLOR_GRAY2BGR) == white, imagen, black))
     contours, hierarchy = cv2.findContours(dilatacion, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
     imagen_leyenda = cv2.putText(img, str(len(contours)), (100, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
-    cv2.imshow("Draw", cv2.drawContours(imagen_leyenda, contours, -1, (0, 255, 0), 3))
+    cv2.imshow("Resultado", cv2.drawContours(imagen_leyenda, contours, -1, (0, 255, 0), 3))
+
     cv2.imshow("Filtrado", dilatacion)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
