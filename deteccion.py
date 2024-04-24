@@ -40,8 +40,6 @@ def calculo_hsv(h_prom, s_prom, v_prom, imagen, hsv):
     white = np.full(h.shape + (3,), 255, np.uint8)
     black = np.full(h.shape + (3,), 0, np.uint8)
 
-    h_condition = h <= h_prom + 5
-
     dilatacion = limpieza(
         # Matriz condicional
         np.where(np.sqrt((h_prom - h) ** 2 + (s_prom - s) ** 2 + (v_prom - v) ** 2)[..., None] <= 50, black, white),
