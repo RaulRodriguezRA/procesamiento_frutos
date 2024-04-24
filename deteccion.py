@@ -4,10 +4,6 @@ import sys
 
 img = np.array([0, 0], np.uint8)
 imagen_final = None
-anchura = 0
-altura = 0
-detecciones = 0
-valor_previo = [0, 0]
 
 params = cv2.SimpleBlobDetector.Params()
 params.filterByArea = True
