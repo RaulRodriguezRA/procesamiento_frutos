@@ -34,7 +34,7 @@ def calculo_hsv(h_prom, s_prom, v_prom, imagen, hsv):
     h_condition = np.abs(h_prom - h) < 5
     t_condition = np.sqrt((s_prom - s) ** 2 + (v_prom - v) ** 2) < 50
 
-    dilatacion = limpieza(
+    imagen_procesada = limpieza(
         # Matriz condicional
         np.where(np.logical_and(h_condition, t_condition)[..., None], black, white),
         (5, 5),
@@ -42,7 +42,7 @@ def calculo_hsv(h_prom, s_prom, v_prom, imagen, hsv):
         (21, 21)
     )
 
-    contornos, hierarchy = cv2.findContours(dilatacion, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    contornos, hierarchy = cv2.findContours(imagen_procesada, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     imagen_leyenda = cv2.putText(imagen, str(len(contornos)), (100, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
 
     imagen_final = cv2.drawContours(imagen_leyenda, contornos, -1, (0, 255, 0), 3)
