@@ -51,7 +51,6 @@ def calculo_hsv(h_prom, s_prom, v_prom, imagen, hsv):
         (21, 21)
     )
 
-    cv2.imshow("Segemtación", np.where(cv2.cvtColor(dilatacion, cv2.COLOR_GRAY2BGR) == white, imagen, black))
     contours, hierarchy = cv2.findContours(dilatacion, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
     imagen_leyenda = cv2.putText(img, str(len(contours)), (100, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
