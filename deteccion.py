@@ -1,14 +1,5 @@
 import numpy as np
 import cv2
-import sys
-
-img = np.array([0, 0], np.uint8)
-imagen_final = None
-
-params = cv2.SimpleBlobDetector.Params()
-params.filterByArea = True
-params.minArea = 200
-params.maxArea = sys.maxsize + 1
 
 
 def limpieza(imagen, erosion, dilatacion, kblur):
@@ -23,17 +14,17 @@ def limpieza(imagen, erosion, dilatacion, kblur):
     # Aplicar blur
     blur = cv2.blur(erosion, kblur)
 
-    # Aplicar Dilatacion
+    # Umbralización
     _, mask = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV)
-    dilatacion = cv2.dilate(mask, kernel_dil)
+
+    # Aplicar Dilatacion
+    dilatacion = cv2.dilate(mask, kernel_dil, iterations=1)
+
     return dilatacion
 
 
 def calculo_hsv(h_prom, s_prom, v_prom, imagen, hsv):
-    global img, anchura, altura, imagen_final
-    img = imagen
     anchura, altura, _ = np.shape(imagen)
-    imagen_final = np.array([anchura, altura], np.uint16)
     h, s, v = cv2.split(hsv)
 
     # Matrices Blanca y Negra
@@ -47,15 +38,17 @@ def calculo_hsv(h_prom, s_prom, v_prom, imagen, hsv):
         # Matriz condicional
         np.where(np.logical_and(h_condition, t_condition)[..., None], black, white),
         (5, 5),
-        (31, 31),
+        (51, 51),
         (21, 21)
     )
 
-    contours, hierarchy = cv2.findContours(dilatacion, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    contornos, hierarchy = cv2.findContours(dilatacion, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    imagen_leyenda = cv2.putText(imagen, str(len(contornos)), (100, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
 
-    imagen_leyenda = cv2.putText(img, str(len(contours)), (100, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
-    cv2.imshow("Resultado", cv2.drawContours(imagen_leyenda, contours, -1, (0, 255, 0), 3))
+    imagen_final = cv2.drawContours(imagen_leyenda, contornos, -1, (0, 255, 0), 3)
 
+    cv2.imshow("Resultado", imagen_final)
     cv2.imshow("Filtrado", dilatacion)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+    
