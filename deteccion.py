@@ -31,8 +31,8 @@ def calculo_hsv(h_prom, s_prom, v_prom, imagen, hsv):
     white = np.full(h.shape + (3,), 255, np.uint8)
     black = np.full(h.shape + (3,), 0, np.uint8)
 
-    h_condition = np.abs(h_prom - h) < 5
-    t_condition = np.sqrt((s_prom - s) ** 2 + (v_prom - v) ** 2) < 50
+    h_condition = np.abs(h - h_prom) < 10
+    t_condition = np.sqrt((s - s_prom) ** 2 + (v - v_prom) ** 2) < 50
 
     imagen_procesada = limpieza(
         # Matriz condicional
